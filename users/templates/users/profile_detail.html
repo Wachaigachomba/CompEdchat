@@ -1,0 +1,19 @@
+{% extends "wachai/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="content-section">
+    <div class="media">
+        <img class="rounded-circle account-img" src="{{ profile_user.profile.image.url }}">
+        <div class="media-body">
+            <h2 class="account-heading">{{ profile_user.username }}</h2>
+            <p class="text-secondary">{{ profile_user.email }}</p>
+            {% if profile_user.id != request.user.id %}
+            <a href="{% url 'chat:initiate_chat' user_id=profile_user.id %}">
+                <i class="fas fa-comments"></i> Chat with {{ profile_user.username }}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    <!-- Include additional profile info or forms as needed -->
+</div>
+{% endblock content %}

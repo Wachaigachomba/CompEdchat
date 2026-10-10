@@ -1,0 +1,33 @@
+{% extends "wachai/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h2>{{ object.title }}</h2>
+    <p>{{ object.content }}</p>
+
+    {% if object.image %}
+    <div class="mt-3">
+        <img src="{{ object.image.url }}" alt="Post Image" class="img-fluid rounded">
+    </div>
+    {% endif %}
+
+    {% if object.video %}
+    <div class="mt-3">
+        <video width="100%" controls class="rounded">
+            <source src="{{ object.video.url }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    {% endif %}
+
+    <p class="text-muted mt-3">
+        Posted on: {{ object.date_posted|date:"F d, Y" }} by {{ object.author }}
+    </p>
+
+    {% if user == object.author or user.is_staff %}
+    <div class="mt-3">
+        <a href="{% url 'post-update' object.pk %}" class="btn btn-primary">Update</a>
+        <a href="{% url 'post-delete' object.pk %}" class="btn btn-danger">Delete</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

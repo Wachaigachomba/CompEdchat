@@ -1,0 +1,44 @@
+{% extends "wachai/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="full-screen d-flex align-items-center justify-content-center" style="background-color: #e6f0fa;">
+    <div class="card shadow-sm rounded form-container">
+        <div class="card-body">
+            <h2 class="card-title text-center mb-4">Log In</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    {{ form|crispy }}
+                </fieldset>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-outline-info btn-block btn-sm">Login</button>
+                </div>
+                <div class="text-center">
+                    <a href="{% url 'phone_password_reset' %}"><small>Forgot Password?</small></a>
+                </div>
+            </form>
+            <div class="border-top pt-3 mt-3 text-center">
+                <small class="text-muted">
+                    Need An Account? <a href="{% url 'register' %}" class="ml-2">Sign Up Now</a>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom CSS -->
+<style>
+    .full-screen {
+        height: 100vh;
+    }
+
+    .form-container {
+        width: 100%;
+        max-width: 400px;
+        background: white;
+        border: 1px solid #e0e0e0;
+        padding: 20px;
+        border-radius: 12px;
+    }
+</style>
+{% endblock content %}

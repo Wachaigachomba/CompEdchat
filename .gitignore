@@ -1,0 +1,57 @@
+
+# Python files
+__pycache__/
+*.py[cod]
+*.pyo
+
+
+# Local databases and database backups
+db.sqlite3
+*.sqlite3
+*.db
+*.sql
+*.dump
+
+# Private uploads and logs
+media/
+logs/
+
+
+# User-uploaded media
+media/
+
+# Video files
+*.mp4
+
+# Unrelated video file
+*.mp4
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Django generated files
+staticfiles/
+media/
+*.log
+
+# Local databases
+db.sqlite3
+db.sqlite3-journal
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Test and coverage files
+.coverage
+htmlcov/
+.pytest_cache/

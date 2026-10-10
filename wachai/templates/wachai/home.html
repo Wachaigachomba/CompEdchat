@@ -1,0 +1,155 @@
+{% extends "wachai/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% for post in posts %}
+<article class="media content-section mb-4">
+    <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
+    <div class="media-body">
+        <div class="article-metadata">
+            <a class="mr-2" href="#">{{ post.author }}</a>
+            <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+        </div>
+        <h2>
+            <a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a>
+        </h2>
+        <p class="article-content">{{ post.content }}</p>
+
+        <!-- Display Post Image Below the Content -->
+        {% if post.image %}
+        <div class="mt-3">
+            <img src="{{ post.image.url }}" alt="Post Image" class="img-fluid rounded">
+        </div>
+        {% endif %}
+
+        <!-- Display Post Video Below the Content (if available) -->
+        {% if post.video %}
+        <div class="mt-3">
+            <video width="100%" controls class="rounded">
+                <source src="{{ post.video.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        {% endif %}
+
+        <p class="text-muted mt-3">Posted on: {{ post.date_posted|date:"F d, Y" }} by {{ post.author }}</p>
+
+        <!-- Reply Section -->
+        <div class="reply-section mt-4">
+            <h5>Comments</h5>
+            <!-- Existing Replies -->
+            <div id="replies-container-post-{{ post.pk }}" style="display: none;">
+                {% for reply in post.replies.all %}
+                <div class="media mt-2">
+                    <img class="rounded-circle article-img" src="{{ reply.author.profile.image.url }}"
+                        style="width: 40px; height: 40px;">
+                    <div class="media-body ml-2">
+                        <h6>
+                            {{ reply.author }}
+                            <small class="text-muted">{{ reply.date_posted|date:"F d, Y" }}</small>
+                        </h6>
+                        <p>{{ reply.content }}</p>
+                        {% if reply.image %}
+                        <div class="reply-image">
+                            <img src="{{ reply.image.url }}" alt="Attached image"
+                                style="max-width: 200px; height: auto;">
+                        </div>
+                        {% endif %}
+                        <!-- Reply Icon for Nested Reply -->
+                        <i class="fas fa-reply reply-icon" onclick="toggleReplyForm('reply-{{ reply.pk }}')"
+                            title="Reply"></i>
+                        <!-- Reply Form for Nested Reply (Initially Hidden) -->
+                        <form method="POST" action="{% url 'post-reply' post.pk %}" id="reply-form-reply-{{ reply.pk }}"
+                            style="display: none; margin-top: 10px;">
+                            {% csrf_token %}
+                            {{ reply_form.as_p }}
+                            <button type="submit" class="btn btn-success btn-sm">Submit Reply</button>
+                        </form>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">No comments yet.</p>
+                {% endfor %}
+            </div>
+            <!-- Toggle Replies Button -->
+            <button class="btn btn-link" onclick="toggleReplies('post-{{ post.pk }}')">Show Comments</button>
+
+            <!-- Reply Form for Post (Initially Hidden) -->
+            <form method="POST" action="{% url 'post-reply' post.pk %}" id="reply-form-post-{{ post.pk }}"
+                style="display: none; margin-top: 10px;">
+                {% csrf_token %}
+                {{ reply_form.as_p }}
+                <button type="submit" class="btn btn-success btn-sm">Submit Reply</button>
+            </form>
+            <!-- Reply Icon for Post -->
+            <i class="fas fa-reply reply-icon" onclick="toggleReplyForm('post-{{ post.pk }}')" title="Reply"></i>
+        </div>
+        <!-- End Reply Section -->
+    </div>
+</article>
+{% endfor %}
+{% if is_paginated %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="page-link">First</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="page-link">Previous</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}
+                <strong class="current page-link">{{ num }}</strong>
+            {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="page-link">Next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">Last</a>
+        {% endif %}
+    </div>
+{% endif %}
+<!-- JavaScript to Toggle Reply Form and Replies Section -->
+<script>
+    function toggleReplyForm(uniqueId) {
+        console.log("Toggling reply form for:", uniqueId);
+        var form = document.getElementById("reply-form-" + uniqueId);
+        if (!form) {
+            console.error("No element found with ID: reply-form-" + uniqueId);
+            return;
+        }
+        form.style.display = (form.style.display === "none" || form.style.display === "") ? "block" : "none";
+    }
+
+    function toggleReplies(uniqueId) {
+        console.log("Toggling replies for:", uniqueId);
+        var container = document.getElementById("replies-container-" + uniqueId);
+        var btn = event.target;
+        if (!container) {
+            console.error("No element found with ID: replies-container-" + uniqueId);
+            return;
+        }
+        if (container.style.display === "none" || container.style.display === "") {
+            container.style.display = "block";
+            btn.textContent = "Hide Replies";
+        } else {
+            container.style.display = "none";
+            btn.textContent = "Show Replies";
+        }
+    }
+</script>
+{% endblock %}
+
+<!-- Add Some CSS for Styling the Reply Icon -->
+<style>
+    .reply-icon {
+        cursor: pointer;
+        font-size: 16px;
+        color: #007bff;
+        margin-left: 10px;
+        transform: rotate(180deg);
+    }
+
+    .reply-icon:hover {
+        color: #0056b3;
+    }
+</style>

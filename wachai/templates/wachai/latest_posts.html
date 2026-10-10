@@ -1,0 +1,16 @@
+{% extends "wachai/base.html" %}
+
+{% block content %}
+    <h2>Latest Posts</h2>
+
+    {% for post in posts %}
+        <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+            <h3>{{ post.title }}</h3>
+            <p><strong>By:</strong> {{ post.author }} | <strong>Posted on:</strong> {{ post.date_posted }}</p>
+            <p>{{ post.content|linebreaks }}</p>  <!-- Shows formatted text -->
+            <a href="{% url 'post-detail' post.id %}">Read More</a>
+        </div>
+    {% empty %}
+        <p>No posts available.</p>
+    {% endfor %}
+{% endblock %}

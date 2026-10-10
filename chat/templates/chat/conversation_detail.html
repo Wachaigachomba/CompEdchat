@@ -1,0 +1,46 @@
+{% extends "wachai/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Conversation</h2>
+    <div id="chat-log" style="height: 400px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+        {% for message in conversation.messages.all %}
+        <p><strong>{{ message.sender.username }}:</strong> {{ message.content }}</p>
+        {% endfor %}
+    </div>
+    <div class="input-group mt-3">
+        <input id="chat-message-input" type="text" class="form-control" placeholder="Type your message...">
+        <div class="input-group-append">
+            <button id="chat-message-submit" class="btn btn-primary">Send</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const conversationId = "{{ conversation.id }}";
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/private-chat/' + conversationId + '/'
+    );
+
+    chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        const chatLog = document.getElementById('chat-log');
+        chatLog.innerHTML += '<p><strong>' + data.username + ':</strong> ' + data.message + '</p>';
+        chatLog.scrollTop = chatLog.scrollHeight;
+    };
+
+    chatSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.getElementById('chat-message-submit').onclick = function (e) {
+        const inputElem = document.getElementById('chat-message-input');
+        const message = inputElem.value;
+        if (message.trim() !== '') {
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            inputElem.value = '';
+        }
+    };
+</script>
+{% endblock %}

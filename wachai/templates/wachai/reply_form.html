@@ -1,0 +1,15 @@
+{% extends "wachai/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="mb-4">Reply to "{{ post.title }}"</h2>
+            <form method="POST" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Submit Reply</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

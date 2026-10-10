@@ -1,0 +1,54 @@
+{% extends "wachai/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="full-screen d-flex align-items-center justify-content-center" style="background-color: #e6f0fa;">
+    <div class="card shadow-sm rounded form-container">
+        <div class="card-body p-3">
+            <h2 class="card-title text-center mb-3">Sign Up</h2>
+            <form method="POST" class="p-2">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <!-- Helper text for phone number format -->
+                <div class="text-muted small mt-2">
+                    Please enter your phone number in the format: <strong>+2547XXXXXXXX</strong>
+                </div>
+                <button type="submit" class="btn btn-block btn-sm mt-3 custom-blue-btn">Register</button>
+            </form>
+            <div class="border-top pt-2 mt-3 text-center">
+                <small class="text-muted">
+                    Already have an account? <a href="{% url 'login' %}" class="ml-1">Log In</a>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom CSS -->
+<style>
+    .full-screen {
+        height: 100vh;
+    }
+
+    .form-container {
+        width: 100%;
+        max-width: 400px;
+        /* Reduced max-width to make it more compact */
+        background: white;
+        padding: 15px;
+        /* Reduced padding */
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+    }
+
+    .custom-blue-btn {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: white;
+    }
+
+    .custom-blue-btn:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+</style>
+{% endblock %}
